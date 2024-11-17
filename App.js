@@ -16,6 +16,7 @@ export default function App() {
   const [editingTaskId, setEditingTaskId] = useState(null);
   const [editingTaskText, setEditingTaskText] = useState('');
 
+  // Save tasks to AsyncStorage
   const saveTasksToStorage = async (tasks) => {
     try {
       await AsyncStorage.setItem('tasks', JSON.stringify(tasks));
@@ -24,6 +25,7 @@ export default function App() {
     }
   };
 
+  // Load tasks from AsyncStorage
   const loadTasksFromStorage = async () => {
     try {
       const savedTasks = await AsyncStorage.getItem('tasks');
@@ -35,10 +37,12 @@ export default function App() {
     }
   };
 
+   // Load tasks on app start
   useEffect(() => {
     loadTasksFromStorage();
   }, []);
 
+  // Save tasks whenever they change
   useEffect(() => {
     saveTasksToStorage(tasks);
   }, [tasks]);
@@ -83,6 +87,7 @@ export default function App() {
   const AnimatedTask = ({ task, onDelete }) => {
     const fadeAnim = useRef(new Animated.Value(0)).current;
 
+    // Fade-in effect for task addition
     useEffect(() => {
       if (editingTaskId !== task.id) {
         Animated.timing(fadeAnim, {
@@ -101,7 +106,8 @@ export default function App() {
       }).start(() => onDelete(task.id));
     };
 
-    if (editingTaskId === task.id) {
+    // If editing, return a plain view without animations
+    if (editingTaskId === task.id) { 
       return (
         <View style={styles.taskContainer}>
           <TextInput
@@ -117,6 +123,7 @@ export default function App() {
       );
     }
 
+    // Normal view with animations for adding and deleting
     return (
       <Animated.View style={{ opacity: fadeAnim }}>
         <View style={styles.taskContainer}>
